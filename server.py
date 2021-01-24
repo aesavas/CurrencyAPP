@@ -15,6 +15,10 @@ unit = {
 @app.route("/",methods=["GET","POST"])
 @app.route("/index",methods=["GET","POST"])
 def index():
+    return render_template("index.html")
+
+@app.route("/converter",methods=["GET","POST"])
+def converter():
     if request.method == "POST":
         fromMoney = request.form.get("from")
         toMoney = request.form.get("to")
@@ -29,9 +33,6 @@ def index():
             "amount":amount,
             "result":result
         }
-
         return render_template("index.html", unit=unit, selected=1, data=data)
-
-
     else:
         return render_template("index.html", unit=unit)

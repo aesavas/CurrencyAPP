@@ -1,0 +1,37 @@
+{% extends "includes/layout.html" %}
+
+{% block body_content %}
+    <br><br><br><br>
+    <form method="POST">
+        <div class="row">
+            <div class="col">
+                <select name="from" class="form-select" aria-label="From">
+                    <option selected>From</option>
+                    {% for key,value in unit.items() %}
+                        <option value={{key}}>{{value}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <select name="to" class="form-select" aria-label="To">
+                    <option selected>To</option>
+                    {% for key,value in unit.items() %}
+                        <option value={{key}}>{{value}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <hr>
+            <input class="form-control" type="text" placeholder="Amount.." aria-label="Amount" name="amount">
+            <hr>
+            <button type="submit" class="btn btn-primary">Convert</button>
+        </div>
+    </form>
+    {% if selected %}
+    <br><br>
+        <h4>Your Convert</h4>
+        1 x {{data.from}} = {{data.rates}} {{data.to}}<br>
+        <br>
+        {{data.amount}} x {{data.from}} = {{data.result}} {{data.to}} <br>
+    {% else %}
+    {% endif %}
+{% endblock body_content %} 

@@ -12,8 +12,8 @@ unit = {
 
 
 
-@app.route("/",methods=["GET","POST"])
-@app.route("/index",methods=["GET","POST"])
+@app.route("/")
+@app.route("/index")
 def index():
     return render_template("index.html")
 
@@ -33,6 +33,6 @@ def converter():
             "amount":amount,
             "result":result
         }
-        return render_template("index.html", unit=unit, selected=1, data=data)
+        return render_template("pages/converter.html", unit=unit, selected=1, data=data)
     else:
-        return render_template("index.html", unit=unit)
+        return render_template("pages/converter.html", unit=unit)

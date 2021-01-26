@@ -1,3 +1,4 @@
+from flask.globals import current_app
 import requests
 
 class Currency():
@@ -52,3 +53,7 @@ class Currency():
         symbols="&symbols="+toMoney
         current_url = self.basic_url + date + base + symbols
         return requests.get(current_url).json()["rates"]
+    
+    def latestRates(self, base):
+        current_url = self.basic_url + "latest?base=" + base
+        return requests.get(current_url).json()

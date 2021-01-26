@@ -40,5 +40,16 @@ def converter():
         return render_template("pages/converter.html", unit=unit)
 
 
-# @app.route("/historical_rates",["GET","POST"])
-# def
+@app.route("/rates",methods=["GET","POST"])
+def allRates():
+    if request.method == "POST":
+        base = request.form.get("base")
+        apiData = c.latestRates(base)
+        data = {
+            "date" : datetime.datetime.strptime(apiData["date"],'%Y-%m-%d').strftime("%d %B %Y"),
+            "base" : apiData["base"],
+            "rates" : apiData["rates"]
+        }
+        return render_template("pages/allrates.html", unit=unit, data=data, selected=1)
+    else:
+        return render_template("pages/allrates.html", unit=unit)

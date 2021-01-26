@@ -1,16 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
 from static.API.currency import Currency
-
+import datetime
 
 app = Flask(__name__)
 
-unit = {
-    "GBP":"British Pound",
-    "TRY":"Turkish Liras",
-    "USD":"American Dollar"
-}
-
-
+c = Currency()
+unit = c.currencyUnit
 
 @app.route("/")
 @app.route("/index")
@@ -23,16 +18,27 @@ def converter():
         fromMoney = request.form.get("from")
         toMoney = request.form.get("to")
         amount = request.form.get("amount")
-        rates = Currency.getRequest(fromMoney,toMoney)
-        print(rates)
+        date = request.form.get("date")
+        if date == "":
+            withdate = 0
+            rates = c.latestConverter(fromMoney,toMoney)
+        else:
+            withdate = 1
+            rates = c.historicalConverter(fromMoney,toMoney,date)
+            date = datetime.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y")
         result = float(amount)*float(rates[toMoney])
         data = {
             "from":fromMoney,
             "to":toMoney,
             "rates":rates[toMoney],
             "amount":amount,
-            "result":result
+            "result":result,
+            "date":date
         }
-        return render_template("pages/converter.html", unit=unit, selected=1, data=data)
+        return render_template("pages/converter.html", unit=unit, selected=1, data=data, withdate=withdate)
     else:
         return render_template("pages/converter.html", unit=unit)
+
+
+# @app.route("/historical_rates",["GET","POST"])
+# def

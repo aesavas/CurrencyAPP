@@ -1,0 +1,66 @@
+{% extends "includes/layout.html" %}
+
+
+{% block body_content %}
+    <form method="POST">
+        <div class="row">
+            <div class="col">
+                <select name="base" class="form-select" aria-label="Base" required>
+                    <option value="">Base</option>
+                    {% for key,value in unit.items() %}
+                        <option value={{key}}>{{key}} - {{value}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <select name="target" class="form-select" aria-label="Target" required>
+                    <option value="">Target</option>
+                    {% for key,value in unit.items() %}
+                        <option value={{key}}>{{key}} - {{value}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <label for="start">START AT :</label>
+                <input type="date" id="start" name="start" required>
+            </div>
+            <div class="col">
+                <label for="end">END AT :</label>
+                <input type="date" id="end" name="end" required>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <button type="submit" class="btn btn-danger">List</button>
+        </div>
+    </form>
+    <hr><br><br><br>
+    {% if selected %}
+        Base : {{data.base}} <br>
+        Starting Date: {{data.start}} <br>
+        Ending Date: {{data.end}} <br><br>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Abbreviation</th>
+                    <th scope="col">Currency Unit</th>
+                    <th scope="col">Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,value in data.rates.items() %}
+                    <tr>
+                        <th scope="row">{{loop.index}}</th>
+                        <td>{{key}}</td>
+                        <td>{{data.target}}</td>
+                        <td>{{unit[data.target]}}</td>
+                        <td>{{value}}</td>
+                    </tr>
+                {% endfor %}    
+            </tbody>
+        </table>
+    {% else %}
+    {% endif %}
+{% endblock body_content %}

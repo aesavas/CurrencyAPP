@@ -61,3 +61,7 @@ class Currency():
     def specialDateRates(self, base, date):
         current_url = self.basic_url + date + "?base=" + base
         return requests.get(current_url).json()
+
+    def dateRangeRates(self, base, target, start_at, end_at):
+        current_url = self.basic_url + "history?start_at=" + start_at + "&end_at=" + end_at + "&base=" + base + "&symbols=" + target
+        return requests.get(current_url).json() 

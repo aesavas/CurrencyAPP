@@ -57,3 +57,7 @@ class Currency():
     def latestRates(self, base):
         current_url = self.basic_url + "latest?base=" + base
         return requests.get(current_url).json()
+    
+    def specialDateRates(self, base, date):
+        current_url = self.basic_url + date + "?base=" + base
+        return requests.get(current_url).json()

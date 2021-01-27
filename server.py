@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask.helpers import flash
 from static.API.currency import Currency
 import datetime
 
 app = Flask(__name__)
+app.secret_key="aesavas"
 
 c = Currency()
 unit = c.currencyUnit
@@ -39,17 +41,24 @@ def converter():
     else:
         return render_template("pages/converter.html", unit=unit)
 
-
 @app.route("/rates",methods=["GET","POST"])
 def allRates():
     if request.method == "POST":
         base = request.form.get("base")
-        apiData = c.latestRates(base)
+        date = request.form.get("date")
+        if date == "":
+            apiData = c.latestRates(base)
+        elif date < "1999-01-04":
+            flash("Please do not choose older then 04-01-1999","warning")
+            return render_template("pages/allrates.html", unit=unit)
+        else:
+            apiData = c.specialDateRates(base, date)
         data = {
-            "date" : datetime.datetime.strptime(apiData["date"],'%Y-%m-%d').strftime("%d %B %Y"),
+            "date" : datetime.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y"),
             "base" : apiData["base"],
             "rates" : apiData["rates"]
         }
         return render_template("pages/allrates.html", unit=unit, data=data, selected=1)
     else:
         return render_template("pages/allrates.html", unit=unit)
+

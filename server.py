@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, make_response
 from flask.helpers import flash
 from static.API.currency import Currency
-import datetime
+import datetime as dt
+from static.API.download import Download
 
 app = Flask(__name__)
 app.secret_key="aesavas"
 
 c = Currency()
+d = Download()
 unit = c.currencyUnit
 
 @app.route("/")
@@ -46,15 +48,18 @@ def allRates():
     if request.method == "POST":
         base = request.form.get("base")
         date = request.form.get("date")
+        print(date)
         if date == "":
+            date = dt.datetime.strptime(str(dt.datetime.now().date()),'%Y-%m-%d').strftime("%d %B %Y")
             apiData = c.latestRates(base)
         elif date < "1999-01-04":
             flash("Please do not choose older then 04-01-1999","warning")
             return render_template("pages/allrates.html", unit=unit)
         else:
             apiData = c.specialDateRates(base, date)
+            date = dt.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y")
         data = {
-            "date" : datetime.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y"),
+            "date" : date,
             "base" : apiData["base"],
             "rates" : apiData["rates"]
         }
@@ -69,7 +74,6 @@ def historicalRates():
         toMoney = request.form.get("target")
         start = request.form.get("start")
         end = request.form.get("end")
-        print(start, end)
         if start < "1999-01-04" or end < "1999-01-04":
             flash("Please do not choose older then 04-01-1999","warning")
             return render_template("pages/historicalrates.html", unit=unit)
@@ -80,7 +84,7 @@ def historicalRates():
             apiData = c.dateRangeRates(fromMoney,toMoney,start,end)
             rates = {}
             for key, value in sorted(apiData["rates"].items()):
-                rates[datetime.datetime.strptime(key,'%Y-%m-%d').strftime("%d %B %Y")]=value[toMoney]
+                rates[dt.datetime.strptime(key,'%Y-%m-%d').strftime("%d %B %Y")]=value[toMoney]
             data = {
                 "base":fromMoney,
                 "target":toMoney,
@@ -92,3 +96,18 @@ def historicalRates():
             return render_template("pages/historicalrates.html", unit=unit, selected=1, data=data)
     else:
         return render_template("pages/historicalrates.html", unit=unit)
+
+@app.route("/downloads")
+def downloadsPage():
+    return render_template("pages/downloads.html")
+
+@app.route('/download-csv')  
+def download_csv():  
+    #csv = d.downloadLatestRates("USD")
+    #csv = d.downloadSpecialDateRates("USD","2011-07-21")
+    csv = d.downloadDateRangeDates("USD","TRY","2018-01-01","2018-01-10")
+    response = make_response(csv)
+    cd = 'attachment; filename=mycsv.csv'
+    response.headers['Content-Disposition'] = cd 
+    response.mimetype='text/csv'
+    return response

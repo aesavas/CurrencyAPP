@@ -48,7 +48,6 @@ def allRates():
     if request.method == "POST":
         base = request.form.get("base")
         date = request.form.get("date")
-        print(date)
         if date == "":
             date = dt.datetime.strptime(str(dt.datetime.now().date()),'%Y-%m-%d').strftime("%d %B %Y")
             apiData = c.latestRates(base)
@@ -97,17 +96,60 @@ def historicalRates():
     else:
         return render_template("pages/historicalrates.html", unit=unit)
 
-@app.route("/downloads")
+@app.route("/downloads", methods=["GET","POST"])
 def downloadsPage():
-    return render_template("pages/downloads.html")
+    if request.method == "POST":
+        csv = ""
+        filename = ""
+        if request.form["submit"] == "downloadAll":
+            base = request.form["base"]
+            date = request.form["date"]
+            if date == "":
+                filename = dt.datetime.strptime(str(dt.datetime.now().date()),'%Y-%m-%d').strftime("%d %B %Y")
+                csv = d.downloadLatestRates(base)
+            elif date < "1999-01-04":
+                flash("Please do not choose older then 04-01-1999","warning")
+                return render_template("pages/downloads.html", unit=unit)
+            else:
+                csv = d.downloadSpecialDateRates(base, date)
+                filename = dt.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y")
+        else:
+            fromMoney = request.form["fromMoney"]
+            toMoney = request.form["toMoney"]
+            start = request.form["start"]
+            end = request.form["end"]
+            if start < "1999-01-04" or end < "1999-01-04":
+                flash("Please do not choose older then 04-01-1999","warning")
+                return render_template("pages/downloads.html", unit=unit)
+            elif start > end:
+                flash("Start date cannot newer then end date.","danger")
+                return render_template("pages/downloads.html", unit=unit)
+            else:
+                csv = d.downloadDateRangeDates(fromMoney,toMoney,start,end)
+                start = dt.datetime.strptime(start,'%Y-%m-%d').strftime("%d %B %Y")
+                end = dt.datetime.strptime(end,'%Y-%m-%d').strftime("%d %B %Y")
+                filename = "StartAt-" + start + "EndAt-" + end
+        filename += ".csv"
+        response = make_response(csv)
+        cd = f'attachment; filename={filename}'
+        response.headers['Content-Disposition'] = cd 
+        response.mimetype='text/csv'
+        return response
+    else:
+        return render_template("pages/downloads.html", unit=unit)
 
-@app.route('/download-csv')  
+
+
+
+
+@app.route('/download-csv', methods=["GET","POST"])  
 def download_csv():  
     #csv = d.downloadLatestRates("USD")
     #csv = d.downloadSpecialDateRates("USD","2011-07-21")
-    csv = d.downloadDateRangeDates("USD","TRY","2018-01-01","2018-01-10")
-    response = make_response(csv)
-    cd = 'attachment; filename=mycsv.csv'
-    response.headers['Content-Disposition'] = cd 
-    response.mimetype='text/csv'
-    return response
+    # csv = d.downloadDateRangeDates("USD","TRY","2018-01-01","2018-01-10")
+    # response = make_response(csv)
+    # cd = 'attachment; filename=mycsv.csv'
+    # response.headers['Content-Disposition'] = cd 
+    # response.mimetype='text/csv'
+    # return response
+    return render_template("pages/downloads.html", unit=unit)

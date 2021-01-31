@@ -1,5 +1,61 @@
 {% extends "includes/layout.html" %}
 
 {% block body_content %}
-    <a href="/download-csv" class="btn btn-primary">CSV FILE</a>
+    <div>
+        <h2></h2>
+        <form action="{{ url_for('downloadPage') }}" method="POST">
+            <div class="row">
+                <div class="col-auto">
+                    <select name="base" class="form-select" aria-label="Base" required>
+                        <option value="">Base</option>
+                        {% for key,value in unit.items() %}
+                            <option value={{key}}>{{key}} - {{value}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input type="date" id="date" name="date">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" value="downloadAll" class="btn btn-danger">Download</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr><br><br><br><br><br><br><br><br>
+    <div>
+        <form action="{{ url_for('downloadsPage') }}" method="POST">
+            <div class="row">
+                <div class="col">
+                    <select name="fromMoney" class="form-select" aria-label="Base" required>
+                        <option value="">Base</option>
+                        {% for key,value in unit.items() %}
+                            <option value={{key}}>{{key}} - {{value}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <select name="toMoney" class="form-select" aria-label="Target" required>
+                        <option value="">Target</option>
+                        {% for key,value in unit.items() %}
+                            <option value={{key}}>{{key}} - {{value}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="start">START AT :</label>
+                    <input type="date" id="start" name="start" required>
+                </div>
+                <div class="col">
+                    <label for="end">END AT :</label>
+                    <input type="date" id="end" name="end" required>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <button type="submit" value="downloadRange" class="btn btn-danger">Download</button>
+            </div>
+        </form>
+    </div>
+    <br><br><hr>
 {% endblock body_content %}

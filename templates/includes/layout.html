@@ -7,6 +7,9 @@
     <title>Currency Application</title>
     <link rel="shortcut icon" href="{{url_for('static', filename='assets/images/favicon.ico')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='/assets/style.css') }}">
+    {% block head_content %}
+    
+    {% endblock head_content %}
 </head>
 <body>
     {% include "includes/navbar.html" %}

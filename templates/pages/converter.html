@@ -31,12 +31,14 @@
     {% if selected and withdate %}
         <br><br>
         <h4>Your Convert</h4>
-        In : {{data.date}} <br>
+        In : {{data.date}} <br><br>
         1 x {{data.from}} = {{data.rates}} {{data.to}}<br>
         <br>
         {{data.amount}} x {{data.from}} = {{data.result}} {{data.to}} <br>
     {% elif selected and not withdate %}
+        <br><br>
         <h4>Your Convert</h4>
+        In : {{data.date}} <br><br>
         1 x {{data.from}} = {{data.rates}} {{data.to}}<br>
         <br>
         {{data.amount}} x {{data.from}} = {{data.result}} {{data.to}} <br>

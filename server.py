@@ -25,11 +25,12 @@ def converter():
         date = request.form.get("date")
         if date == "":
             withdate = 0
+            date = dt.datetime.strptime(str(dt.datetime.now().date()),'%Y-%m-%d').strftime("%d %B %Y")
             rates = c.latestConverter(fromMoney,toMoney)
         else:
             withdate = 1
             rates = c.historicalConverter(fromMoney,toMoney,date)
-            date = datetime.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y")
+            date = dt.datetime.strptime(date,'%Y-%m-%d').strftime("%d %B %Y")
         result = float(amount)*float(rates[toMoney])
         data = {
             "from":fromMoney,
@@ -101,7 +102,8 @@ def downloadsPage():
     if request.method == "POST":
         csv = ""
         filename = ""
-        if request.form["submit"] == "downloadAll":
+        print(request.form)
+        if len(request.form) == 2:
             base = request.form["base"]
             date = request.form["date"]
             if date == "":
@@ -134,22 +136,7 @@ def downloadsPage():
         cd = f'attachment; filename={filename}'
         response.headers['Content-Disposition'] = cd 
         response.mimetype='text/csv'
+        flash("Your data is downloaded !","danger")
         return response
     else:
         return render_template("pages/downloads.html", unit=unit)
-
-
-
-
-
-@app.route('/download-csv', methods=["GET","POST"])  
-def download_csv():  
-    #csv = d.downloadLatestRates("USD")
-    #csv = d.downloadSpecialDateRates("USD","2011-07-21")
-    # csv = d.downloadDateRangeDates("USD","TRY","2018-01-01","2018-01-10")
-    # response = make_response(csv)
-    # cd = 'attachment; filename=mycsv.csv'
-    # response.headers['Content-Disposition'] = cd 
-    # response.mimetype='text/csv'
-    # return response
-    return render_template("pages/downloads.html", unit=unit)

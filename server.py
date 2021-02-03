@@ -102,8 +102,7 @@ def downloadsPage():
     if request.method == "POST":
         csv = ""
         filename = ""
-        print(request.form)
-        if len(request.form) == 2:
+        if len(request.form) == 2: # I used it to clarify which form has been submitted.
             base = request.form["base"]
             date = request.form["date"]
             if date == "":
@@ -136,7 +135,6 @@ def downloadsPage():
         cd = f'attachment; filename={filename}'
         response.headers['Content-Disposition'] = cd 
         response.mimetype='text/csv'
-        flash("Your data is downloaded !","danger")
         return response
     else:
         return render_template("pages/downloads.html", unit=unit)
